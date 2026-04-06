@@ -69,31 +69,13 @@ public class AuthorController {
 
     }
 
-    // ============= Endpoints para manejar la relación con Books =============
+    // ============= Endpoint para manejar la relación con Books =============
 
     @GetMapping("/{authorId}/books")
     public ResponseEntity<List<Book>> getBooksByAuthor(@PathVariable Long authorId) {
 
         List<Book> books = authorService.getBooksByAuthor(authorId);
         return ResponseEntity.ok(books);
-    }
-
-    @PostMapping("/{authorId}/books")
-    public ResponseEntity<Author> addBookToAuthor(
-            @PathVariable Long authorId,
-            @RequestBody Book book) {
-
-        Author author = authorService.addBookToAuthor(authorId, book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(author);
-    }
-
-    @DeleteMapping("/{authorId}/books/{bookId}")
-    public ResponseEntity<Author> removeBookFromAuthor(
-            @PathVariable Long authorId,
-            @PathVariable Long bookId) {
-
-        Author author = authorService.removeBookFromAuthor(authorId, bookId);
-        return ResponseEntity.ok(author);
     }
 
 }

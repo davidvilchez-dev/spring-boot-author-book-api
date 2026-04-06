@@ -17,10 +17,6 @@ public interface AuthorService {
 
     void delete(Long id);
 
-    Author addBookToAuthor(Long authorId, Book book);
-
-    Author removeBookFromAuthor(Long authorId, Long bookId);
-
     List<Book> getBooksByAuthor(Long authorId);
 
 }

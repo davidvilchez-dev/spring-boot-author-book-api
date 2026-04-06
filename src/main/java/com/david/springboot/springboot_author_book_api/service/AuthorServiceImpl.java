@@ -11,16 +11,12 @@ import com.david.springboot.springboot_author_book_api.entity.Author;
 import com.david.springboot.springboot_author_book_api.entity.Book;
 import com.david.springboot.springboot_author_book_api.exception.ResourceNotFoundException;
 import com.david.springboot.springboot_author_book_api.repository.AuthorRepository;
-import com.david.springboot.springboot_author_book_api.repository.BookRepository;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
     @Autowired
     private AuthorRepository authorRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -77,37 +73,6 @@ public class AuthorServiceImpl implements AuthorService {
 
         authorRepository.delete(author);
 
-    }
-
-    @Transactional
-    @Override
-    public Author addBookToAuthor(Long authorId, Book book) {
-
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado"));
-
-        author.addBook(book);
-
-        return authorRepository.save(author);
-    }
-
-    @Transactional
-    @Override
-    public Author removeBookFromAuthor(Long authorId, Long bookId) {
-
-        Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado"));
-
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new ResourceNotFoundException("Libro no encontrado"));
-
-        if (!book.getAuthor().getId().equals(authorId)) {
-            throw new IllegalStateException("El libro no pertenece a este autor");
-        }
-
-        author.removeBook(book);
-
-        return authorRepository.save(author);
     }
 
     @Transactional(readOnly = true)
