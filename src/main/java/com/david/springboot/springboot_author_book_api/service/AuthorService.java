@@ -2,21 +2,22 @@ package com.david.springboot.springboot_author_book_api.service;
 
 import java.util.List;
 
-import com.david.springboot.springboot_author_book_api.entity.Author;
-import com.david.springboot.springboot_author_book_api.entity.Book;
+import com.david.springboot.springboot_author_book_api.dto.AuthorRequest;
+import com.david.springboot.springboot_author_book_api.dto.AuthorResponse;
+import com.david.springboot.springboot_author_book_api.dto.BookResponse;
 
 public interface AuthorService {
 
-    List<Author> findAll();
+    List<AuthorResponse> findAll();
 
-    Author findById(Long id);
+    AuthorResponse findById(Long id);
 
-    Author create(Author author);
+    AuthorResponse create(AuthorRequest authorRequest);
 
-    Author update(Long id, Author author);
+    AuthorResponse update(Long id, AuthorRequest authorRequest);
 
     void delete(Long id);
 
-    List<Book> getBooksByAuthor(Long authorId);
+    List<BookResponse> getBooksByAuthor(Long authorId);
 
 }

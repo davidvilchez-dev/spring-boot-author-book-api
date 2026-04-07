@@ -1,15 +1,20 @@
 package com.david.springboot.springboot_author_book_api.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.david.springboot.springboot_author_book_api.dto.AuthorRequest;
+import com.david.springboot.springboot_author_book_api.dto.AuthorResponse;
+import com.david.springboot.springboot_author_book_api.dto.BookResponse;
 import com.david.springboot.springboot_author_book_api.entity.Author;
 import com.david.springboot.springboot_author_book_api.entity.Book;
 import com.david.springboot.springboot_author_book_api.exception.ResourceNotFoundException;
+import com.david.springboot.springboot_author_book_api.mapper.AuthorMapper;
+import com.david.springboot.springboot_author_book_api.mapper.BookMapper;
 import com.david.springboot.springboot_author_book_api.repository.AuthorRepository;
 
 @Service
@@ -20,48 +25,52 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Author> findAll() {
+    public List<AuthorResponse> findAll() {
 
-        List<Author> authors = authorRepository.findAll();
-        return authors;
+        return authorRepository.findAll().stream()
+                .map(AuthorMapper::toAuthorResponse)
+                .collect(Collectors.toList());
+
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Author findById(Long id) {
+    public AuthorResponse findById(Long id) {
 
         return authorRepository.findById(id)
+                .map(AuthorMapper::toAuthorResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado"));
 
     }
 
     @Transactional
     @Override
-    public Author create(Author author) {
+    public AuthorResponse create(AuthorRequest authorRequest) {
 
-        if (author.getBooks() != null && !author.getBooks().isEmpty()) {
-            List<Book> books = new ArrayList<>(author.getBooks());
-            books.forEach(book -> author.addBook(book));
-        }
+        Author author = authorRepository.save(AuthorMapper.toAuthorEntity(authorRequest));
 
-        return authorRepository.save(author);
+        AuthorResponse authorResponse = AuthorMapper.toAuthorResponse(author);
+
+        return authorResponse;
 
     }
 
     @Transactional
     @Override
-    public Author update(Long id, Author author) {
+    public AuthorResponse update(Long id, AuthorRequest authorRequest) {
 
         Author authorExist = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado"));
 
-        authorExist.setName(author.getName());
-        authorExist.setEmail(author.getEmail());
-        authorExist.setBiography(author.getBiography());
+        authorExist.setName(authorRequest.getName());
+        authorExist.setEmail(authorRequest.getEmail());
+        authorExist.setBiography(authorRequest.getBiography());
 
         Author authorUpdated = authorRepository.save(authorExist);
 
-        return authorUpdated;
+        AuthorResponse authorResponse = AuthorMapper.toAuthorResponse(authorUpdated);
+
+        return authorResponse;
     }
 
     @Transactional
@@ -77,12 +86,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Book> getBooksByAuthor(Long authorId) {
+    public List<BookResponse> getBooksByAuthor(Long authorId) {
 
         Author author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado"));
 
-        return author.getBooks();
+        return author.getBooks().stream()
+                .map(BookMapper::toBookResponse)
+                .collect(Collectors.toList());
     }
 
 }

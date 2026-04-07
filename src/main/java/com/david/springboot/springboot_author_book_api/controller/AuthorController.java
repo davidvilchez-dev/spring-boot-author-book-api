@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.david.springboot.springboot_author_book_api.dto.AuthorRequest;
+import com.david.springboot.springboot_author_book_api.dto.AuthorResponse;
+import com.david.springboot.springboot_author_book_api.dto.BookResponse;
 import com.david.springboot.springboot_author_book_api.entity.Author;
 import com.david.springboot.springboot_author_book_api.entity.Book;
 import com.david.springboot.springboot_author_book_api.service.AuthorService;
@@ -26,36 +29,36 @@ public class AuthorController {
     private AuthorService authorService;
 
     @GetMapping
-    public ResponseEntity<List<Author>> getAllAuthors() {
+    public ResponseEntity<List<AuthorResponse>> getAllAuthors() {
 
-        List<Author> authors = authorService.findAll();
+        List<AuthorResponse> authors = authorService.findAll();
 
         return ResponseEntity.ok(authors);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponse> getAuthorById(@PathVariable Long id) {
 
-        Author authorOptional = authorService.findById(id);
+        AuthorResponse author = authorService.findById(id);
 
-        return ResponseEntity.ok(authorOptional);
+        return ResponseEntity.ok(author);
 
     }
 
     @PostMapping
-    public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+    public ResponseEntity<AuthorResponse> createAuthor(@RequestBody AuthorRequest author) {
 
-        Author authorCreated = authorService.create(author);
+        AuthorResponse authorCreated = authorService.create(author);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(authorCreated);
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable Long id, @RequestBody Author author) {
+    public ResponseEntity<AuthorResponse> updateAuthor(@PathVariable Long id, @RequestBody AuthorRequest author) {
 
-        Author authorUpdated = authorService.update(id, author);
+        AuthorResponse authorUpdated = authorService.update(id, author);
 
         return ResponseEntity.ok(authorUpdated);
 
@@ -72,9 +75,9 @@ public class AuthorController {
     // ============= Endpoint para manejar la relación con Books =============
 
     @GetMapping("/{authorId}/books")
-    public ResponseEntity<List<Book>> getBooksByAuthor(@PathVariable Long authorId) {
+    public ResponseEntity<List<BookResponse>> getBooksByAuthor(@PathVariable Long authorId) {
 
-        List<Book> books = authorService.getBooksByAuthor(authorId);
+        List<BookResponse> books = authorService.getBooksByAuthor(authorId);
         return ResponseEntity.ok(books);
     }
 
